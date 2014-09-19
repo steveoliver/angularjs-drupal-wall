@@ -1,0 +1,21 @@
+<h2>WALL</h2>
+<p>Current post id: {{ postId }}</p>
+ 
+<div class="posts" ng-if="posts">
+  <div class="post" ng-repeat="post in posts">
+    <h3>{{ post.title }}</h3>
+    <p>{{ post.body }}</p>
+    <div class="comments" ng-if="post.comments">
+      <div class="comment" ng-repeat="comment in post.comments">
+        {{comment.text}}
+        <div class="comment-edit-form">
+          <form ng-submit="comment.$save()">
+            <label for="comment-edit-subject" value="Subject" /><input name="comment-edit-subject" ng-model="comment.subject">
+            <label for="comment-edit-body" value="Body" /><input name="comment-edit-body" ng-model="comment.body">
+            <input type="submit">
+          </form>
+        </div>
+      </div><!-- End Comments -->
+  </div><!-- End Post -->
+</div><!-- End Posts -->
+
