@@ -90,3 +90,11 @@ body {
     border-bottom: 0;
   }
 }
+
+.post-add-form,
+.post-edit-form,
+.comment-add-form,
+.comment-edit-form {
+  border: 1px solid #CCC;
+  padding: 1em;
+}

@@ -31,7 +31,7 @@ angular.module('wallApp')
     // ---------------------------------
 
     $scope.posts = [
-      {'nid': 1, 'title': 'Post 1 Subject', 'body': 'Post 1 body', 'comments': [{'cid': 11, 'subject': 'Comment Subject 1', 'body': 'Comment Body'}, {'cid': 12, 'subject': 'Comment Subject 2', 'body': 'Comment Body'}]},
+      {'nid': 1, 'title': 'Post 1 Subject', 'body': 'Post 1 body', 'comments': [{'cid': 11, 'nid': 1, 'subject': 'Comment Subject 1', 'body': 'Comment Body'}, {'cid': 12, 'nid': 1, 'subject': 'Comment Subject 2', 'body': 'Comment Body'}]},
       {'nid': 2, 'title': 'Post 2 Subject', 'body': 'Post 2 body'},
       {'nid': 3, 'title': 'Post 3 Subject', 'body': 'Post 3 body'},
       {'nid': 4, 'title': 'Post 4 Subject', 'body': 'Post 4 body'},
@@ -42,37 +42,43 @@ angular.module('wallApp')
     $scope.currentComment = null;
 
     // ----------------------------------------
-    // New Post
+    // Create Post
     // ----------------------------------------
-    $scope.newpost = {
+
+    $scope.newPost = {
       title: '',
       body: ''
-    }
+    };
 
     function resetNewPost() {
-      $scope.newpost = {
+      $scope.newPost = {
         title: '',
         body: ''
       };
     }
 
-    function submitNewPost(post) {
-      post.id = $scope.posts.length; // Validate that shit
+    function createPost(post) {
+      post.nid = $scope.posts.length; // Validate that shit
       $scope.posts.push(post);
       $scope.currentPost = post; // Do this different probably
 
       resetNewPost();
     }
 
-    $scope.submitNewPost = submitNewPost;
+    $scope.createPost = createPost;
 
     // ----------------------------------------
     // Update Post
     // ----------------------------------------
 
     function updatePost(post) {
-      index = post.id;
+      var index = _.findIndex($scope.posts, function(p) {
+        return p.nid === post.nid;
+      });
       $scope.posts[index] = post;
+
+      $scope.editedPost = null;
+      $scope.isEditingPost = false;
     }
 
     $scope.updatePost = updatePost;
@@ -93,21 +99,6 @@ angular.module('wallApp')
     $scope.isCurrentPost = isCurrentPost;
 
     // ----------------------------------------
-    // Current Comment
-    // ----------------------------------------
-
-    function isCurrentComment(comment) {
-      return $scope.currentComment !== null && comment.id === $scope.currentComment.id;
-    }
-   
-    function setCurrentComment(comment) {
-      $scope.currentComment = comment;
-    }
-
-    $scope.setCurrentComment = setCurrentComment;
-    $scope.isCurrentComment = isCurrentComment;
-
-    // ----------------------------------------
     // States: Creating and Editing Posts
     // ----------------------------------------
 
@@ -122,7 +113,7 @@ angular.module('wallApp')
     $scope.setEditedPost = setEditedPost;
 
     function shouldShowCreatingPost() {
-      return $scope.isCreatingPost && !$scope.isEditingPost;
+      return $scope.isCreatingPost && !$scope.isEditingPost && !$scope.isCreatingComment && !$scope.isEditingComment;
     }
 
     function startCreatingPost() {
@@ -139,22 +130,41 @@ angular.module('wallApp')
     $scope.startCreatingPost = startCreatingPost;
     $scope.cancelCreatingPost = cancelCreatingPost;
 
-    function shouldShowEditingPost() {
-      return $scope.isEditingPost && !$scope.isCreatingPost;
+    function shouldShowEditingPost(post) {
+      return $scope.isEditingPost && !$scope.isCreatingPost && $scope.editedPost.nid === post.nid && !$scope.isCreatingComment && !$scope.isEditingComment;
     }
 
     function startEditingPost() {
       $scope.isCreatingPost = false;
+      $scope.isCreatingComment = false;
       $scope.isEditingPost = true;
+      $scope.isEditingComment = false;
     }
 
     function cancelEditingPost() {
+      $scope.editedPost = null;
       $scope.isEditingPost = false;
     }
 
     $scope.shouldShowEditingPost = shouldShowEditingPost;
     $scope.startEditingPost = startEditingPost;
     $scope.cancelEditingPost = cancelEditingPost;
+
+    // ----------------------------------------
+    // Current Comment
+    // ----------------------------------------
+
+    function isCurrentComment(comment) {
+      return $scope.currentComment !== null && comment.id === $scope.currentComment.id;
+    }
+   
+    function setCurrentComment(comment) {
+      $scope.currentComment = comment;
+    }
+
+    $scope.setCurrentComment = setCurrentComment;
+    $scope.isCurrentComment = isCurrentComment;
+
 
     // ---------------------------------
     // States: Creating and Editing Comments
@@ -170,11 +180,26 @@ angular.module('wallApp')
 
     $scope.setEditedComment = setEditedComment;
 
-    function submitEditComment() {
+    function updateComment(comment) {
+      var postId = _.findIndex($scope.posts, function(p) {
+        return p.nid === editedComment.nid;
+      });
+      var commentindex = _.findIndex($scope.posts[postId].comments, function(c) {
+        return c.cid === comment.cid;
+      });
+
+      $scope.postId = postId;
+      $scope.commentindex = commentindex;
+
+      $scope.posts[postId].comments[index] = comment;
+      $scope.editedComment = null;
+      $scope.isEditingComment = false;
     }
 
-    function shouldShowCreatingComment() {
-      return $scope.currentPost && !$scope.isEditingComment;
+    $scope.updateComment = updateComment;
+
+    function shouldShowCreatingComment(post) {
+      return $scope.isCreatingComment && $scope.currentPost && $scope.currentPost.nid === post.nid && !$scope.isEditingComment && !$scope.isCreatingPost && !$scope.isEditingPost;
     }
 
     function startCreatingComment() {
@@ -184,14 +209,15 @@ angular.module('wallApp')
 
     function cancelCreatingComment() {
       $scope.isCreatingComment = false;
+      resetNewComment();
     }
 
     $scope.shouldShowCreatingComment = shouldShowCreatingComment;
     $scope.startCreatingComment = startCreatingComment;
     $scope.cancelCreatingComment = cancelCreatingComment;
 
-    function shouldShowEditingComment() {
-      return $scope.currentComment && !$scope.isCreatingComment;
+    function shouldShowEditingComment(comment) {
+      return $scope.editedComment && !$scope.isCreatingComment && $scope.editedComment.cid === comment.cid && !$scope.isCreatingPost && !$scope.isEditingPost;
     }
 
     function startEditingComment() {
@@ -200,6 +226,7 @@ angular.module('wallApp')
     }
 
     function cancelEditingComment() {
+      $scope.editedComment = null;
       $scope.isEditingComment = false;
     }
 
