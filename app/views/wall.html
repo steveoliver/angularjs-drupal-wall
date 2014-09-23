@@ -1,16 +1,38 @@
 <h2>Wall Posts and Comments with Add and Edit Functionality</h2>
 <hr />
-<p>Current post id: {{ postId }}</p>
 
-<button type="button" ng-click="startCreatingPost()">Create new post</button>
+<a ng-click="startCreatingPost()">Create new post</a>
 
-<div ng-if="shouldShowCreatingPost()">
+<div style="border: 1px solid;" ng-if="shouldShowCreatingPost()">
   <h3>Create Post</h3>
-  <form ng-submit="submitNewPost(newpost)">
-    Title: <input type="title" ng-model="newpost.title" />
-    Body: <input type="textarea" ng-model="newpost.body" rows="5" cols="12" />
+  <form role="form" ng-submit="submitNewPost(newpost)">
+    <div class="form-group">
+      <label for="newPostTitle">Title</label>
+       <input class="form-control" name="newPostTitle" type="title" ng-model="newpost.title" />
+     </div>
+     <div class="form-group">
+       <label for="newPostBody">Body</title>
+       <textarea name="newPostBody" ng-model="newpost.body" rows="5" cols="12">
+         {{ newPost.body }}
+       </textarea>
+     </div>
     <button type="submit">Add</button>
     <button type="submit" ng-click="cancelCreatingPost()">Cancel</button>
+  </form>
+</div>
+<div ng-if="shouldShowEditingPost()">
+  <h4>Edit {{ editedPost.title }}</h4>
+  <form class="edit-form" ng-submit="updatePost(editedPost)">
+    <div class="form-group">
+      <label>Title</label>
+      <input type="text" ng-model="editedPost.title" />
+    </div>
+    <div class="form-group">
+      <label>Body</label>
+      <textarea ng-model="editedPost.body">{{ editedPost.body }}</textarea>
+    </div>
+    <button type="submit" class="btn btn-info btn-lg">Submit</button>
+    <button type="button" class="btn btn-default btn-lg pull-right" ng-click="cancelEditingPost()">Cancel</button>
   </form>
 </div>
 
@@ -18,13 +40,17 @@
   <div class="post" ng-repeat="post in posts | orderBy:-id">
     <h3>{{ post.title }}</h3>
     <p>{{ post.body }}</p>
+    <a ng-click="setEditedPost(post);startEditingPost();">Edit Post</a>
     <div class="comments" ng-if="post.comments">
       <div class="comment" ng-repeat="comment in post.comments">
-        {{comment.text}}
-        <div class="comment-edit-form">
+        <h4>{{ comment.title }}</h4>
+        <p>{{ comment.body }}</p>
+        <a ng-click="setEditedComment(comment);startEditingComment();">Edit Comment</a>
+        <div ng-show="shouldShowEditingComment()" class="comment-edit-form">
+          <h5>Edit {{ comment.title }}</h5>
           <form ng-submit="comment.$save()">
-            <label for="comment-edit-subject" value="Subject" /><input name="comment-edit-subject" ng-model="comment.subject">
-            <label for="comment-edit-body" value="Body" /><input name="comment-edit-body" ng-model="comment.body">
+            <label for="comment-edit-subject" value="Subject" /><input type="text" name="comment-edit-subject" ng-model="comment.subject">
+            <label for="comment-edit-body" value="Body" /><input type="text" name="comment-edit-body" ng-model="comment.body">
             <input type="submit">
           </form>
         </div>

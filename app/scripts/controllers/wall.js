@@ -31,7 +31,7 @@ angular.module('wallApp')
     // ---------------------------------
 
     $scope.posts = [
-      {'nid': 1, 'title': 'Post 1 Subject', 'body': 'Post 1 body'},
+      {'nid': 1, 'title': 'Post 1 Subject', 'body': 'Post 1 body', 'comments': [{'cid': 11, 'subject': 'Comment Subject 1', 'body': 'Comment Body'}, {'cid': 12, 'subject': 'Comment Subject 2', 'body': 'Comment Body'}]},
       {'nid': 2, 'title': 'Post 2 Subject', 'body': 'Post 2 body'},
       {'nid': 3, 'title': 'Post 3 Subject', 'body': 'Post 3 body'},
       {'nid': 4, 'title': 'Post 4 Subject', 'body': 'Post 4 body'},
@@ -65,6 +65,17 @@ angular.module('wallApp')
     }
 
     $scope.submitNewPost = submitNewPost;
+
+    // ----------------------------------------
+    // Update Post
+    // ----------------------------------------
+
+    function updatePost(post) {
+      index = post.id;
+      $scope.posts[index] = post;
+    }
+
+    $scope.updatePost = updatePost;
 
     // ----------------------------------------
     // Current Post
@@ -102,6 +113,13 @@ angular.module('wallApp')
 
     $scope.isCreatingPost = false;
     $scope.isEditingPost = false;
+    $scope.editedPost = null;
+
+    function setEditedPost(post) {
+      $scope.editedPost = angular.copy(post);
+    }
+
+    $scope.setEditedPost = setEditedPost;
 
     function shouldShowCreatingPost() {
       return $scope.isCreatingPost && !$scope.isEditingPost;
@@ -122,7 +140,7 @@ angular.module('wallApp')
     $scope.cancelCreatingPost = cancelCreatingPost;
 
     function shouldShowEditingPost() {
-      return $scope.isEditingPost() && !$scope.isCreatingPost;
+      return $scope.isEditingPost && !$scope.isCreatingPost;
     }
 
     function startEditingPost() {
@@ -144,6 +162,16 @@ angular.module('wallApp')
 
     $scope.isCreatingComment = false;
     $scope.isEditingComment = false;
+    $scope.editedComment = null;
+    
+    function setEditedComment(comment) {
+      $scope.editedComment = angular.copy(comment);
+    }
+
+    $scope.setEditedComment = setEditedComment;
+
+    function submitEditComment() {
+    }
 
     function shouldShowCreatingComment() {
       return $scope.currentPost && !$scope.isEditingComment;
