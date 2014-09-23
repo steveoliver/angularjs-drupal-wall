@@ -5,14 +5,14 @@
 
 <div class="post-add-form" ng-if="shouldShowCreatingPost()">
   <h3>Create Post</h3>
-  <form role="form" ng-submit="submitNewPost(newPost)">
+  <form role="form" ng-submit="createPost(newPost)">
     <div class="form-group">
-      <label for="newPostTitle">Title</label>
-      <input class="form-control" id="newPostTitle" type="title" ng-model="newPost.title" />
+      <label for="newPostTitle">Title</label><br/>
+      <input type="text" class="form-control" id="newPostTitle" ng-model="newPost.title" />
      </div>
      <div class="form-group">
-       <label for="newPostBody">Body</label>
-       <textarea id="newPostBody" cols="60" rows="6" ng-model="newPost.body"></textarea>
+       <label for="newPostBody">Body</label><br/>
+       <textarea id="newPostBody" cols="80" rows="6" ng-model="newPost.body"></textarea>
      </div>
     <button class="btn btn-lg btn-info" type="submit">Add</button>
     <button class="btn btn-lg pull-right" type="submit" ng-click="cancelCreatingPost()">Cancel</button>
@@ -33,54 +33,62 @@
         </div>
         <div class="form-group">
           <label for="editedPostBody">Body</label><br>
-          <textarea id="editedPostBody" ng-model="editedPost.body"></textarea>
+          <textarea cols="80" rows="6" id="editedPostBody" ng-model="editedPost.body"></textarea>
         </div>
         <button type="submit" class="btn btn-info btn-lg">Submit</button>
         <button type="button" class="btn btn-default btn-lg pull-right" ng-click="cancelEditingPost()">Cancel</button>
       </form>
     </div>
-    <!-- End Edit Post -->
+
+    <!-- Add Comment link -->
     <a ng-click="setCurrentPost(post);startCreatingComment();">Add comment</a>
-     <ul class="comments" ng-if="post.comments">
-      <li class="comment" ng-repeat="comment in post.comments">
-        <h4>{{ comment.subject }}</h4>
-        <p>{{ comment.body }}</p>
-        <a ng-click="setEditedComment(comment);startEditingComment();">Edit Comment</a>
 
-        <div class="comment-edit-form" ng-if="shouldShowEditingComment(comment)">
-          <h4>Edit Comment</h4>
-          <form class="edit-form" ng-submit="updateComment(editedComment)">
-            <div class="form-group">
-              <label for="editedCommentSubject">Subject</label><br>
-              <input type="text" id="editedCommentSubject" ng-model="editedComment.subject">
-            </div>
-            <div class="form-group">
-              <label for="editedCommentBody">Body</label><br>
-              <textarea id="editedCommentBody" ng-model="editedComment.body"></textarea>
-            </div>
-            <button type="submit" class="btn btn-info btn-lg">Submit</button>
-            <button type="button" class="btn btn-default btn-lg pull-right" ng-click="cancelEditingComment()">Cancel</button>
-          </form>
-        </div>
+    <!-- Comments list -->
+    <div ng-show="hasComments(post)">
+      <h3>Comments</h3>
+      <ul class="comments">
+        <li class="comment" ng-repeat="comment in post.comments">
+          <h4>{{ comment.subject }}</h4>
+          <p>{{ comment.body }}</p>
+          <a ng-click="setEditedComment(comment);startEditingComment();">Edit Comment</a>
 
-      </li>
+          <div class="comment-edit-form" ng-if="shouldShowEditingComment(comment)">
+            <h4>Edit Comment</h4>
+            <form class="edit-form" ng-submit="updateComment(editedComment)">
+              <div class="form-group">
+                <label for="editedCommentSubject">Subject</label><br>
+                <input type="text" id="editedCommentSubject" ng-model="editedComment.subject" />
+              </div>
+              <div class="form-group">
+                <label for="editedCommentBody">Body</label><br>
+                <textarea id="editedCommentBody" ng-model="editedComment.body"></textarea>
+              </div>
+              <button type="submit" class="btn btn-info btn-lg">Submit</button>
+              <button type="button" class="btn btn-default btn-lg pull-right" ng-click="cancelEditingComment()">Cancel</button>
+            </form>
+          </div>
+
+        </li>
+      </ul>
+    </div>
+    <ul ng-if="shouldShowCreatingComment(post)">
+      <!-- Add Comment -->
+      <li>
+        <h4>Add Comment</h4>
+        <form class="edit-form comment-add-form" ng-submit="createComment(newComment)">
+          <div class="form-group">
+            <label for="newCommentSubject">Subject</label><br>
+            <input type="text" id="newCommentSubject" ng-model="newComment.subject">
+          </div>
+          <div class="form-group">
+            <label for="newCommentBody">Body</label><br>
+            <textarea id="newCommentBody" ng-model="newComment.body"></textarea>
+          </div>
+          <button type="submit" class="btn btn-info btn-lg">Submit comment</button>
+          <button type="button" class="btn btn-default btn-lg pull-right" ng-click="cancelCreatingComment()">Cancel</button>
+        </form>
+      </li><!-- End Add Comment -->
      </ul><!-- End Comments -->
-    <!-- Add Comment -->
-    <div class="comment-add-form" ng-if="shouldShowCreatingComment(post)">
-      <h4>Add Comment</h4>
-      <form class="edit-form" ng-submit="createComment(newComment)">
-        <div class="form-group">
-          <label for="newCommentSubject">Subject</label><br>
-          <input type="text" id="newCommentSubject" ng-model="newComment.subject">
-        </div>
-        <div class="form-group">
-          <label for="newCommentBody">Body</label><br>
-          <textarea id="newCommentBody" ng-model="newComment.body"></textarea>
-        </div>
-        <button type="submit" class="btn btn-info btn-lg">Submit comment</button>
-        <button type="button" class="btn btn-default btn-lg pull-right" ng-click="cancelCreatingComment()">Cancel</button>
-      </form>
-    </div><!-- End Add Comment -->
   </div><!-- End Post -->
 </div><!-- End Posts -->
 
