@@ -134,7 +134,7 @@ angular.module('wallApp')
     $scope.cancelCreatingPost = cancelCreatingPost;
 
     function shouldShowEditingPost(post) {
-      return $scope.isEditingPost && $scope.editedPost.nid == post.nid;
+      return $scope.isEditingPost && $scope.editedPost.nid === post.nid;
     }
 
     function startEditingPost() {
@@ -175,9 +175,9 @@ angular.module('wallApp')
 
     function createComment(comment) {
       var post = _.findIndex($scope.posts, function(p) {
-        return p.nid == $scope.currentPost.nid;
+        return p.nid === $scope.currentPost.nid;
       });
-      comment.nid = $scope.currentPost.nid
+      comment.nid = $scope.currentPost.nid;
       comment.cid = comment.nid + $scope.posts[post].comments.length; // LOL
       $scope.posts[post].comments.push(comment);
 
@@ -201,7 +201,7 @@ angular.module('wallApp')
     }
 
     function hasComments(post) {
-      return (post.comments.length);
+      return post.comments && post.comments.length;
     }
 
     $scope.hasComments = hasComments;
@@ -249,13 +249,6 @@ angular.module('wallApp')
       cancelEditingComment();
       $scope.newComment.nid = $scope.currentPost.nid;
       $scope.isCreatingComment = true;
-    }
-
-    function resetNewComment() {
-      $scope.newComment = {
-        subject: '',
-        body: ''
-      };
     }
 
     function cancelCreatingComment() {
