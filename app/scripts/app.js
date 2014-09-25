@@ -35,36 +35,36 @@ angular
       .otherwise({
         redirectTo: '/'
       });
+
   })
   .factory('Post', ['ActiveResource', function(ActiveResource) {
     function Post() {
-      this.number('id');
+      this.number('nid');
       this.string('title');
-      this.string('subtitle');
-      this.computedProperty('fullTitle', function() {
-        return this.title + this.subtitle;
-      }, ['title', 'subtitle']);
-                                                                          this.hasMany('comments');
+      this.string('body');
+      this.hasMany('comments', {foreignKey: 'cid'});
       this.belongsTo('author');
     }
     Post.inherits(ActiveResource.Base);
-    Post.api.set('http://api.example.coM/');
+    Post.api.set('http://api.example.com/');
+    Post.primaryKey = 'nid';
     Post.dependentDestroy('comments');
 
     return Post;
   }])
   .factory('Comment', ['ActiveResource', function(ActiveResource) {
     function Comment() {
-      this.number('id');
-      this.number('post_id');
+      this.number('cid');
+      this.number('nid');
       this.string('subject');
       this.string('body');
 
-      this.belongsTo('post');
-      this.belongsTo('author');
+      this.belongsTo('post', {foreignKey:'nid'});
+      this.belongsTo('author', {foreignKey:'uid'});
     }
     Comment.inherits(ActiveResource.Base);
     Comment.api.set('http://api.example.com/');
+    Comment.primaryKey = 'cid';
 
     return Comment;
   }])
@@ -78,6 +78,7 @@ angular
     }
     Author.inherits(ActiveResource.Base);
     Author.api.set('http://api.example.com/');
+    Author.primaryKey = 'uid';
 
     return Author;
   }])

@@ -10,33 +10,10 @@
 angular.module('wallApp')
   .controller('WallCtrl', ['$scope', 'Post', 'Comment', function ($scope, Post, Comment) {
 
-    Comment.all().then(function(response) {
-      $scope.comments = response;
+    // Group ID  1660746 for testing (existing Drupal backend).
+    Post.where({gid: 1660746}).then(function(response) {
+      $scope.posts = response;
     });
-
-    $scope.postId = 1;
-    var postId = $scope.postId;
-
-    Post.find(postId).then(function(response) {
-      $scope.post      = response;
-      $scope.comment   = $scope.post.comments.new();
-    
-      Comment.after('$save', function() {
-        $scope.comment = $scope.post.comments.new();
-      });
-    });
-
-    // ---------------------------------
-    // Setup (implement/move to Services)
-    // ---------------------------------
-
-    $scope.posts = [
-      {'nid': 1, 'title': 'Post 1 Subject', 'body': 'Post 1 body', 'comments': [{'cid': 11, 'nid': 1, 'subject': 'Comment Subject 1', 'body': 'Comment Body'}, {'cid': 12, 'nid': 1, 'subject': 'Comment Subject 2', 'body': 'Comment Body'}]},
-      {'nid': 2, 'title': 'Post 2 Subject', 'body': 'Post 2 body', 'comments': []},
-      {'nid': 3, 'title': 'Post 3 Subject', 'body': 'Post 3 body', 'comments': []},
-      {'nid': 4, 'title': 'Post 4 Subject', 'body': 'Post 4 body', 'comments': []},
-      {'nid': 5, 'title': 'Post 5 Subject', 'body': 'Post 5 body', 'comments': []},
-    ];
 
     $scope.currentPost = null;
     $scope.currentComment = null;
